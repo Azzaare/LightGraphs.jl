@@ -126,7 +126,11 @@ euclidean_graph,
 kruskal_mst, prim_mst,
 
 #biconnectivity and articulation points
-articulation, biconnected_components
+articulation, biconnected_components,
+
+#knowledge and decycling
+flow_knowledge, AscendingFlowAlgorithm, AbstractKnowledgeAlgorithm,
+decycling!, PathDecyclingAlgorithm, AbstractDecyclingAlgorithm
 
 """
     LightGraphs
@@ -212,5 +216,9 @@ include("spanningtrees/kruskal.jl")
 include("spanningtrees/prim.jl")
 include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
+include("knowledge/path_decycling.jl")
+include("knowledge/decycling.jl")
+include("knowledge/ascending_flow.jl")
+include("knowledge/knowledge.jl")
 
 end # module
