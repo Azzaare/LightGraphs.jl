@@ -5,7 +5,10 @@
     add_edge!(g3, 1, 2)
     add_edge!(g3, 2, 3)
     add_edge!(g3, 3, 1)
-    g4 = DiGraph(4)
+    g4 = DiGraph(6)
+    add_edge!(g4, 3, 6)
+    add_edge!(g4, 4, 6)
+    add_edge!(g4, 5, 1)
     add_edge!(g4, 1, 2)
     add_edge!(g4, 2, 1)
     add_edge!(g4, 2, 3)
@@ -13,7 +16,26 @@
     add_edge!(g4, 4, 3)
     for g in [CompleteDiGraph(2), g3, g4]
         println(g)
-        V = flow_knowledge(g)
+        println("The maximum size of decycling is $(size_decycling(g, algorithm = ContractionDecyclingAlgorithm())).")
+        V = flow_knowledge(g; decycling = ContractionDecyclingAlgorithm())
         println(V)
+        # savegraph("/home/azzaare/size.jgz", g, compress=false)
+        # t = plot(g)
+        # TikzGraphs.save(PDF("/home/azzaare/size.pdf"), t)
     end
+
+    # Tests for version-decycling
+    h3 = CompleteDiGraph(3)
+    vers = [
+        [DateTime(2011), DateTime(2015)],
+        [DateTime(2013)],
+        [DateTime(2012), DateTime(2014), DateTime(2016)]
+    ]
+    println(h3)
+    println("The maximum size of decycling is $(size_decycling(h3, algorithm = VersionDecyclingAlgorithm(), versions = vers)).")
+    V = flow_knowledge(h3; decycling = VersionDecyclingAlgorithm(), versions = vers)
+    println(V)
+    # savegraph("/home/azzaare/size.jgz", h3, compress=false)
+    # t = plot(h3)
+    # TikzGraphs.save(PDF("/home/azzaare/size.pdf"), t)
 end

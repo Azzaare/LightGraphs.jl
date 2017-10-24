@@ -34,11 +34,11 @@ Forces the decycling function to use the version-decycling algorithm.
 struct VersionDecyclingAlgorithm <: AbstractFullDecyclingAlgorithm end
 
 """
-    MergeDecyclingAlgorithm <: AbstractFullDecyclingAlgorithm
+    ContractionDecyclingAlgorithm <: AbstractFullDecyclingAlgorithm
 
-Forces the decycling function to use the merge-decycling algorithm.
+Forces the decycling function to use the contraction-decycling algorithm.
 """
-struct MergeDecyclingAlgorithm <: AbstractFullDecyclingAlgorithm end
+struct ContractionDecyclingAlgorithm <: AbstractFullDecyclingAlgorithm end
 
 """
     StorageDecyclingAlgorithm <: AbstractPartialDecyclingAlgorithm
@@ -54,13 +54,53 @@ Forces the decycling function to not be used (for efficiency in flow_knowledge)
 """
 struct NoDecyclingAlgorithm <: AbstractDecyclingAlgorithm end
 
+# Method for contraction-decycling algorithm
+function decycling!(
+    g::AbstractGraph,
+    knowledges::AbstractVector{T},
+    algorithm::ContractionDecyclingAlgorithm,
+    components::Vector{Vector{Int}},
+    colors::Vector{Int},
+    versions::Vector{Vector{DateTime}}
+    ) where T<:AbstractFloat
+    contraction_decycling!(g, knowledges, components, colors)
+end
+
+# Method for path-decycling algorithm
+function decycling!(
+    g::AbstractGraph,
+    knowledges::AbstractVector{T},
+    algorithm::VersionDecyclingAlgorithm,
+    components::Vector{Vector{Int}},
+    colors::Vector{Int},
+    versions::Vector{Vector{DateTime}}
+    ) where T<:AbstractFloat
+    if isempty(versions)
+        warn("Empty versions information: switch to contraction-decycling algorithm.")
+        contraction_decycling!(g, knowledges, components, colors)
+    else
+        versions_by_component = fill(Vector{Tuple{DateTime, Int}}(), length(components))
+        for (node_id, node_version) in enumerate(versions)
+            for dt in node_version
+                id_insert = findfirst(x -> x[1] > dt, versions_by_component[colors[node_id]])
+                if id_insert == 0
+                    id_insert = length(versions_by_component[colors[node_id]]) + 1
+                end
+                insert!(versions_by_component[colors[node_id]], id_insert, (dt, node_id))
+            end
+        end
+        version_decycling!(g, knowledges, components, colors, versions_by_component)
+    end
+end
+
 # Method for path-decycling algorithm
 function decycling!(
     g::AbstractGraph,
     knowledges::AbstractVector{T},
     algorithm::PathDecyclingAlgorithm,
     components::Vector{Vector{Int}},
-    colors::Vector{Int}
+    colors::Vector{Int},
+    versions::Vector{Vector{DateTime}}
     ) where T<:AbstractFloat
     path_decycling!(g, knowledges, components, colors)
 end
@@ -117,7 +157,8 @@ function decycling!(
     knowledges::AbstractVector{T} =        # knowledge generated at each node
     ones(Float64, nv(g)),
     algorithm::AbstractDecyclingAlgorithm  =    # keyword argument for algorithm
-    PathDecyclingAlgorithm()
+    PathDecyclingAlgorithm(),
+    versions::Vector{Vector{DateTime}} = Vector{Vector{DateTime}}()
     ) where T<:AbstractFloat
 
     components = notsingle_strongly_connected_components(g)
@@ -129,5 +170,36 @@ function decycling!(
             colors[node] = color
         end
     end
-    decycling!(g, knowledges, algorithm, components, colors)
+    decycling!(g, knowledges, algorithm, components, colors, versions)
+end
+
+function size_decycling(
+    k::Int,
+    algorithm::PathDecyclingAlgorithm
+    )
+    return size_decycling_pda(k)
+end
+
+function size_decycling(
+    k::Int,
+    algorithm::ContractionDecyclingAlgorithm
+    )
+    return size_decycling_cda(k)
+end
+
+function size_decycling(
+    g::AbstractGraph;
+    algorithm::AbstractDecyclingAlgorithm =
+    PathDecyclingAlgorithm(),
+    versions::Vector{Vector{DateTime}} = Vector{Vector{DateTime}}()
+    )
+    if algorithm == VersionDecyclingAlgorithm()
+        if isempty(versions)
+            return size_decycling(g; algorithm = ContractionDecyclingAlgorithm())
+        else
+            return size_decycling_vda(notsingle_strongly_connected_components(g), versions)
+        end
+    end
+    return mapreduce(x -> size_decycling(length(x),
+        algorithm), +, 0, notsingle_strongly_connected_components(g))
 end

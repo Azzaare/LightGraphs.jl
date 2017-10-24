@@ -129,8 +129,9 @@ kruskal_mst, prim_mst,
 articulation, biconnected_components,
 
 #knowledge and decycling
-flow_knowledge, AscendingFlowAlgorithm, AbstractKnowledgeAlgorithm,
-decycling!, PathDecyclingAlgorithm, AbstractDecyclingAlgorithm
+flow_knowledge, AscendingFlowAlgorithm, AbstractKnowledgeAlgorithm, size_decycling,
+decycling!, PathDecyclingAlgorithm, ContractionDecyclingAlgorithm, VersionDecyclingAlgorithm,
+AbstractDecyclingAlgorithm
 
 """
     LightGraphs
@@ -217,6 +218,8 @@ include("spanningtrees/prim.jl")
 include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
 include("knowledge/path_decycling.jl")
+include("knowledge/contraction_decycling.jl")
+include("knowledge/version_decycling.jl")
 include("knowledge/decycling.jl")
 include("knowledge/ascending_flow.jl")
 include("knowledge/knowledge.jl")

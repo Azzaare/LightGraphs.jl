@@ -17,9 +17,10 @@ function flow_knowledge(
     vfk::AbstractVector{TF},
     efk::Dict{<:Any,TF},
     knowledge_algorithm::AscendingFlowAlgorithm,
-    decycling::AbstractDecyclingAlgorithm
+    decycling::AbstractDecyclingAlgorithm,
+    versions::Vector{Vector{DateTime}}
     ) where TF <: AbstractFloat
-    return ascending_flow(g, vfk, efk, decycling)
+    return ascending_flow(g, vfk, efk, decycling, versions)
 end
 
 function flow_knowledge(
@@ -31,7 +32,8 @@ function flow_knowledge(
     knowledge_algorithm::AbstractKnowledgeAlgorithm =
     AscendingFlowAlgorithm(),
     decycling::AbstractDecyclingAlgorithm =
-    PathDecyclingAlgorithm()
+    PathDecyclingAlgorithm(),
+    versions::Vector{Vector{DateTime}} = Vector{Vector{DateTime}}()
     ) where TF <: AbstractFloat
-    return flow_knowledge(g, vfk, efk, knowledge_algorithm, decycling)
+    return flow_knowledge(g, vfk, efk, knowledge_algorithm, decycling, versions)
 end

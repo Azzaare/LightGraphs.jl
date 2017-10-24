@@ -6,7 +6,7 @@ function sum_partial_permutation(k::Int)
     return mapreduce(x -> permutation(k, x), +, 0, 1:k)
 end
 
-function size_decycling(k::Int)
+function size_decycling_pda(k::Int)
     return k + sum_partial_permutation(k)
 end
 
@@ -40,7 +40,7 @@ function add_pathes_pda!(
     ) where T<:AbstractFloat
     for i in 1:length(component)
         comp_dict = Dict{Int, Int}(enumerate(component))
-        add_vertex!(digraph) # Add first vertex of path starting from i
+        add_vertex!(digraph) # Add vertex to the path starting from i
         push!(knowledges, zero(T))
         add_pathes_pda!(digraph, knowledges, old_nv, comp_dict, i)
     end
@@ -66,7 +66,7 @@ end
     end
 end
 
-function exchange_knowledges!(
+function exchange_knowledges_pda!(
     knowledges::AbstractVector{T},
     component::Vector{Int},
     old_nv::Int
@@ -88,7 +88,7 @@ function path_decycling!(
     for (color, component) in enumerate(components)
         old_nv = nv(digraph)
         add_vertices!(digraph, length(component)) # v_in vertices
-        exchange_knowledges!(knowledges, component, old_nv) # Expand knowledges; in = 1, out = 0
+        exchange_knowledges_pda!(knowledges, component, old_nv) # Expand knowledges; in = 1, out = 0
         add_pathes_pda!(digraph, knowledges, component, old_nv) # inner pathes edges
         move_edges_pda!(digraph, colors, component, old_nv, color) # move old edges
     end
