@@ -26,6 +26,11 @@
 
     # Tests for version-decycling
     h3 = CompleteDiGraph(3)
+    add_vertices!(h3, 2)
+    add_edge!(h3, 4, 1)
+    add_edge!(h3, 4, 2)
+    add_edge!(h3, 5, 3)
+
     vers = [
         [DateTime(2011), DateTime(2015)],
         [DateTime(2013)],

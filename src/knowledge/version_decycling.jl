@@ -37,18 +37,18 @@ function add_edges_vda!(
     end
 end
 
-function exchange_knowledges_vda!(
-    knowledges::AbstractVector{T},
-    component::Vector{Int},
-    old_nv::Int
-    ) where T<:AbstractFloat
-    append!(knowledges, zeros(T, length(component))) # Expand knowledges vector
-    for (i, v) in enumerate(component)
-        aux = knowledges[v]
-        knowledges[v] = knowledges[old_nv + i]
-        knowledges[old_nv + i] = aux
-    end
-end
+# function exchange_knowledges_vda!(
+#     knowledges::AbstractVector{T},
+#     component::Vector{Int},
+#     old_nv::Int
+#     ) where T<:AbstractFloat
+#     append!(knowledges, zeros(T, length(component))) # Expand knowledges vector
+#     for (i, v) in enumerate(component)
+#         aux = knowledges[v]
+#         knowledges[v] = knowledges[old_nv + i]
+#         knowledges[old_nv + i] = aux
+#     end
+# end
 
 @traitfn function move_edges_vda!(
     g::::IsDirected,
@@ -81,7 +81,8 @@ function version_decycling!(
     for (color, component) in enumerate(components)
         old_nv = nv(digraph)
         add_vertices!(digraph, length(component)) # v_in vertices
-        exchange_knowledges_vda!(knowledges, component, old_nv) # Expand knowledges; in = 1, out = 0
+        # exchange_knowledges_vda!(knowledges, component, old_nv) # Expand knowledges; in = 1, out = 0
+        append!(knowledges, zeros(T, length(component)))
         add_edges_vda!(digraph, knowledges, component, versions[color], old_nv) # inner pathes edges
         move_edges_vda!(digraph, colors, component, old_nv, color) # move old edges
     end

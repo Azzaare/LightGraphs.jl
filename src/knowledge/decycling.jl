@@ -191,7 +191,7 @@ function size_decycling(
     g::AbstractGraph;
     algorithm::AbstractDecyclingAlgorithm =
     PathDecyclingAlgorithm(),
-    versions::Vector{Vector{DateTime}} = Vector{Vector{DateTime}}()
+    versions::Vector{Vector{Int}} = Vector{Vector{Int}}()
     )
     if algorithm == VersionDecyclingAlgorithm()
         if isempty(versions)
