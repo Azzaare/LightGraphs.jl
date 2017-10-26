@@ -108,7 +108,11 @@ end
 @traitfn function notsingle_strongly_connected_components(g::::IsDirected)
     components = sort!(strongly_connected_components(g); by = length)
     first_notsimple = findfirst(x -> length(x) > 1, components)
-    return components[first_notsimple:end]
+    if first_notsimple > 0
+        return components[first_notsimple:end]
+    else
+        return []
+    end
 end
 
 """
@@ -191,7 +195,7 @@ function size_decycling(
     g::AbstractGraph;
     algorithm::AbstractDecyclingAlgorithm =
     PathDecyclingAlgorithm(),
-    versions::Vector{Vector{Int}} = Vector{Vector{Int}}()
+    versions::Vector{Vector{DateTime}} = Vector{Vector{DateTime}}()
     )
     if algorithm == VersionDecyclingAlgorithm()
         if isempty(versions)

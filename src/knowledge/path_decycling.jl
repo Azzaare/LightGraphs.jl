@@ -22,13 +22,24 @@ function add_pathes_pda!(
     cv = nv(g) # current vertex
     add_edge!(g, v_in, cv)
     add_edge!(g, cv, v_out)
+    # println("comp_dict lvl1 = $comp_dict")
+    # for j in keys(comp_dict)
+    #     println("j = $j")
+    # end
     for j in keys(comp_dict)
+        # println("comp_dict lvl2 = $comp_dict")
+        # println(keys(comp_dict))
+        # println("j = $j")
+
+        # if haskey(comp_dict, j) && has_edge(g, comp_dict[j], v_out)
         if has_edge(g, comp_dict[j], v_out)
+
             add_vertex!(g) # Add next vertex in current path
             push!(knowledges, zero(T))
             add_edge!(g, cv, nv(g))
             add_pathes_pda!(g, knowledges, old_nv, deepcopy(comp_dict), j)
         end
+        # println("comp_dict lvl3 = $comp_dict")
     end
 end
 
@@ -38,8 +49,10 @@ function add_pathes_pda!(
     component::Vector{Int},
     old_nv::Int
     ) where T<:AbstractFloat
+    println(length(component))
     for i in 1:length(component)
         comp_dict = Dict{Int, Int}(enumerate(component))
+        println(comp_dict)
         add_vertex!(digraph) # Add vertex to the path starting from i
         push!(knowledges, zero(T))
         add_pathes_pda!(digraph, knowledges, old_nv, comp_dict, i)

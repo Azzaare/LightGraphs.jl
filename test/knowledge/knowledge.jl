@@ -14,10 +14,10 @@
     add_edge!(g4, 2, 3)
     add_edge!(g4, 3, 4)
     add_edge!(g4, 4, 3)
-    for g in [CompleteDiGraph(2), g3, g4]
+    for g in [CompleteDiGraph(8), g3, g4]
         println(g)
-        println("The maximum size of decycling is $(size_decycling(g, algorithm = ContractionDecyclingAlgorithm())).")
-        V = flow_knowledge(g; decycling = ContractionDecyclingAlgorithm())
+        println("The maximum size of decycling is $(size_decycling(g, algorithm = PathDecyclingAlgorithm())).")
+        V = flow_knowledge(g; decycling = PathDecyclingAlgorithm())
         println(V)
         # savegraph("/home/azzaare/size.jgz", g, compress=false)
         # t = plot(g)

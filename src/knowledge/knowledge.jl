@@ -32,7 +32,7 @@ function flow_knowledge(
     knowledge_algorithm::AbstractKnowledgeAlgorithm =
     AscendingFlowAlgorithm(),
     decycling::AbstractDecyclingAlgorithm =
-    PathDecyclingAlgorithm(),
+    ContractionDecyclingAlgorithm(),
     versions::Vector{Vector{DateTime}} = Vector{Vector{DateTime}}()
     ) where TF <: AbstractFloat
     return flow_knowledge(g, vfk, efk, knowledge_algorithm, decycling, versions)
